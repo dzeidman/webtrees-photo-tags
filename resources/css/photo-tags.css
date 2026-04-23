@@ -168,7 +168,7 @@
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.45);
-    z-index: 1040;
+    z-index: 2040;
 }
 
 .pt-modal {
@@ -180,7 +180,7 @@
     border-radius: 6px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     padding: 1rem 1.25rem;
-    z-index: 1050;
+    z-index: 2050;
     min-width: 300px;
     max-width: 440px;
     width: 90vw;

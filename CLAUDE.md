@@ -88,3 +88,6 @@ All routed under `/module/_photo-tags_/{Action}/{tree}`:
 - No i18n `.mo` files; strings go through `I18N::translate()` but have no translations.
 - `canEdit` check in JS is informational; server is the source of truth (editor check in `SaveTag`/`DeleteTag`).
 - Touch/mobile draw mode not implemented — only `mousedown`/`mousemove`/`mouseup`.
+
+## When making changes
+Remind David of the location of the photo tags folder on the AWS Lightsail server: /opt/bitnami/apache/htdocs/webtrees/modules_v4/photo-tags and that after committing the code he should do a git pull to update the server to the latest version.
