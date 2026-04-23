@@ -9,19 +9,31 @@
     const treeName   = cfg.treeName;
     const canEdit    = cfg.canEdit;
 
+    // True when this webtrees install uses legacy ?route=… URLs instead of rewritten pretty URLs.
+    const legacyUrls = new URLSearchParams(window.location.search).has('route')
+        || /\/index\.php$/.test(window.location.pathname);
+
     // Build a URL for a module action that requires a tree.
     function url(action, params) {
-        let u = '/module/' + encodeURIComponent(moduleName) + '/' + action + '/' + encodeURIComponent(treeName);
+        const route = '/module/' + encodeURIComponent(moduleName) + '/' + action + '/' + encodeURIComponent(treeName);
+        if (legacyUrls) {
+            const qs = new URLSearchParams({ route, ...(params ?? {}) });
+            return '/index.php?' + qs.toString();
+        }
+        let u = route;
         if (params) u += '?' + new URLSearchParams(params).toString();
         return u;
     }
 
     // ── Media-page detection ───────────────────────────────────────────────
-    // URL pattern inside a tree: /tree/{name}/media/{xref}
-    const mediaMatch = window.location.pathname.match(/\/tree\/[^/]+\/media\/([^/?]+)/);
+    // Pretty URLs:  /tree/{name}/media/{xref}[/{slug}]
+    // Legacy URLs: /index.php?route=/tree/{name}/media/{xref}[/{slug}]
+    const routeParam = new URLSearchParams(window.location.search).get('route') ?? '';
+    const haystack   = window.location.pathname + '|' + routeParam;
+    const mediaMatch = haystack.match(/\/tree\/[^/]+\/media\/([^/?|]+)/);
     if (!mediaMatch) return;
 
-    const mediaXref = decodeURIComponent(mediaMatch[1].split('/')[0]);
+    const mediaXref = decodeURIComponent(mediaMatch[1]);
 
     // Cache of tags fetched from the server.
     let tagsData = null;
