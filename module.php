@@ -126,7 +126,7 @@ return new class extends AbstractModule implements
 
     public function bodyContent(): string
     {
-        $request = app(ServerRequestInterface::class);
+        $request = Registry::container()->get(ServerRequestInterface::class);
 
         $can_edit  = false;
         $tree_name = '';
