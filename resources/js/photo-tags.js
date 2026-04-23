@@ -78,12 +78,25 @@
         function setup() {
             renderTags(wrapper, img, factId);
 
+            const row = document.createElement('div');
+            row.className = 'pt-btn-row';
+            wrapper.after(row);
+
             if (canEdit && factId) {
                 const btn = makeTagButton();
-                wrapper.after(btn);
+                row.appendChild(btn);
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
                     startDrawMode(wrapper, img, factId, btn);
+                });
+            }
+
+            if (factId) {
+                const expandBtn = makeExpandButton();
+                row.appendChild(expandBtn);
+                expandBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openExpandModal(wrapper, factId);
                 });
             }
         }
@@ -298,6 +311,86 @@
         btn.className = 'btn btn-sm btn-outline-secondary pt-tag-btn mt-1';
         btn.textContent = '+ Tag person';
         return btn;
+    }
+
+    function makeExpandButton() {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm btn-outline-secondary pt-expand-btn mt-1';
+        btn.textContent = '⛶ Expand';
+        btn.title = 'Open larger view for tagging';
+        return btn;
+    }
+
+    // ── Expand modal ───────────────────────────────────────────────────────
+
+    function openExpandModal(thumbWrapper, factId) {
+        const galleryLink = thumbWrapper.querySelector('a.gallery');
+        const thumbImg    = thumbWrapper.querySelector('img');
+        const largeSrc    = (galleryLink && galleryLink.href) || thumbImg.src;
+
+        const backdrop = document.createElement('div');
+        backdrop.className = 'pt-expand-backdrop';
+
+        const container = document.createElement('div');
+        container.className = 'pt-expand-container';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'pt-expand-close';
+        closeBtn.setAttribute('aria-label', 'Close');
+        closeBtn.textContent = '×';
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'pt-wrapper pt-expand-wrapper';
+
+        const img = document.createElement('img');
+        img.className = 'pt-expand-img';
+        img.alt = thumbImg.alt || '';
+
+        wrapper.appendChild(img);
+        container.appendChild(closeBtn);
+        container.appendChild(wrapper);
+
+        document.body.appendChild(backdrop);
+        document.body.appendChild(container);
+
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        function setup() {
+            renderTags(wrapper, img, factId);
+
+            if (canEdit && factId) {
+                const btn = makeTagButton();
+                btn.classList.add('pt-expand-tag-btn');
+                container.appendChild(btn);
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    startDrawMode(wrapper, img, factId, btn);
+                });
+            }
+        }
+
+        img.addEventListener('load', setup);
+        img.src = largeSrc;
+
+        // Re-render overlays if the viewport resizes and the image reflows.
+        function onResize() { renderTags(wrapper, img, factId); }
+        window.addEventListener('resize', onResize);
+
+        function close() {
+            window.removeEventListener('resize', onResize);
+            document.removeEventListener('keydown', onKey);
+            document.body.style.overflow = prevOverflow;
+            backdrop.remove();
+            container.remove();
+            // Refresh thumbnail overlays in case tags were added/removed.
+            if (thumbImg) renderTags(thumbWrapper, thumbImg, factId);
+        }
+        function onKey(e) { if (e.key === 'Escape') close(); }
+
+        document.addEventListener('keydown', onKey);
+        closeBtn.addEventListener('click', close);
+        backdrop.addEventListener('click', close);
     }
 
     async function saveTag(factId, individualXref, x, y, width, height) {
