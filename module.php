@@ -226,7 +226,7 @@ return new class extends AbstractModule implements
                 return [
                     'xref'     => $xref,
                     'name'     => strip_tags($individual->fullName()),
-                    'lifespan' => $individual->lifespan(),
+                    'lifespan' => strip_tags($individual->lifespan()),
                 ];
             })
             ->filter()
