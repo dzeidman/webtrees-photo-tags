@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Individual;
+use Fisharebest\Webtrees\Media;
+use Fisharebest\Webtrees\MediaFile;
+
+/**
+ * @var Individual       $individual
+ * @var array<array{tag: object, media: Media, media_file: MediaFile}> $photos
+ */
+
+?>
+
+<div class="pt-tab-grid">
+    <?php if (empty($photos)) : ?>
+        <p class="pt-tab-empty"><?= I18N::translate('No tagged photos yet.') ?></p>
+    <?php else : ?>
+        <?php foreach ($photos as $entry) : ?>
+            <?php
+                $tag        = $entry['tag'];
+                $media      = $entry['media'];
+                $media_file = $entry['media_file'];
+
+                // Displayed thumbnail width (matches the media-page-details default).
+                $thumb_w = 150;
+                $thumb_h = 150;
+            ?>
+            <div>
+                <a class="pt-tab-photo" href="<?= e($media->url()) ?>" title="<?= e(strip_tags($media->fullName())) ?>">
+                    <?= $media_file->displayImage($thumb_w, $thumb_h, 'contain', []) ?>
+
+                    <?php
+                        // Overlay the tagged region on the thumbnail.
+                        // The stored coordinates are fractions of the original image,
+                        // so we scale them to the rendered thumbnail dimensions.
+                        $ol = round($tag->x * $thumb_w);
+                        $ot = round($tag->y * $thumb_h);
+                        $ow = round($tag->width * $thumb_w);
+                        $oh = round($tag->height * $thumb_h);
+                    ?>
+                    <div class="pt-tab-highlight" style="left:<?= $ol ?>px;top:<?= $ot ?>px;width:<?= $ow ?>px;height:<?= $oh ?>px;"></div>
+                </a>
+                <div class="small text-muted mt-1"><?= e(strip_tags($media->fullName())) ?></div>
+            </div>
+        <?php endforeach ?>
+    <?php endif ?>
+</div>

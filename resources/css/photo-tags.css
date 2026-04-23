@@ -1,0 +1,168 @@
+/* ── Tag wrapper ─────────────────────────────────────────────────────────── */
+
+.pt-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* ── Tag overlay boxes ────────────────────────────────────────────────────── */
+
+.pt-tag {
+    position: absolute;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 220, 0, 0.85);
+    border-radius: 2px;
+    pointer-events: auto;
+    transition: border-color 0.15s;
+}
+
+.pt-tag:hover {
+    border-color: #ffd700;
+}
+
+.pt-tag-label {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: rgba(0, 0, 0, 0.72);
+    color: #fff;
+    font-size: 0.72rem;
+    line-height: 1.3;
+    white-space: nowrap;
+    padding: 1px 4px;
+    border-radius: 2px 2px 0 0;
+    pointer-events: auto;
+}
+
+.pt-tag-label a {
+    color: #ffd700;
+    text-decoration: none;
+}
+
+.pt-tag-label a:hover {
+    text-decoration: underline;
+}
+
+.pt-tag-delete {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    background: rgba(180, 0, 0, 0.8);
+    color: #fff;
+    border: none;
+    border-radius: 0 2px 0 2px;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 1px 4px;
+    cursor: pointer;
+    display: none;
+}
+
+.pt-tag:hover .pt-tag-delete {
+    display: block;
+}
+
+/* ── Draw-mode layer ──────────────────────────────────────────────────────── */
+
+.pt-draw-layer {
+    position: absolute;
+    inset: 0;
+    cursor: crosshair;
+    z-index: 10;
+}
+
+.pt-draw-rect {
+    position: absolute;
+    border: 2px dashed #ffd700;
+    background: rgba(255, 220, 0, 0.15);
+    pointer-events: none;
+}
+
+/* ── "Tag person" button ──────────────────────────────────────────────────── */
+
+.pt-tag-btn {
+    display: block;
+    font-size: 0.75rem;
+}
+
+/* ── Person-search modal ──────────────────────────────────────────────────── */
+
+.pt-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1040;
+}
+
+.pt-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    padding: 1rem 1.25rem;
+    z-index: 1050;
+    min-width: 300px;
+    max-width: 440px;
+    width: 90vw;
+}
+
+.pt-modal-title {
+    margin: 0 0 0.6rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.pt-results {
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.pt-result-item {
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.pt-result-item:hover {
+    background-color: #f0f4ff;
+}
+
+/* ── Individual page tab ──────────────────────────────────────────────────── */
+
+.pt-tab-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.pt-tab-photo {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.pt-tab-photo img {
+    display: block;
+    max-width: 150px;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+.pt-tab-highlight {
+    position: absolute;
+    box-sizing: border-box;
+    border: 2px solid #ffd700;
+    background: rgba(255, 220, 0, 0.2);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.pt-tab-empty {
+    color: #6c757d;
+    font-style: italic;
+    padding: 1rem 0;
+}
