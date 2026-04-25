@@ -161,6 +161,13 @@
 
     // ── Draw-mode (editor only) ────────────────────────────────────────────
 
+    function eventCoords(e) {
+        const src = (e.touches && e.touches.length) ? e.touches[0]
+                  : (e.changedTouches && e.changedTouches.length) ? e.changedTouches[0]
+                  : e;
+        return { clientX: src.clientX, clientY: src.clientY };
+    }
+
     function startDrawMode(wrapper, img, factId, btn) {
         btn.textContent = 'Cancel';
         btn.classList.add('active');
@@ -176,8 +183,9 @@
         function onDown(e) {
             e.preventDefault();
             const b = drawLayer.getBoundingClientRect();
-            startX = e.clientX - b.left;
-            startY = e.clientY - b.top;
+            const { clientX, clientY } = eventCoords(e);
+            startX = clientX - b.left;
+            startY = clientY - b.top;
 
             rect = document.createElement('div');
             rect.className = 'pt-draw-rect';
@@ -185,12 +193,16 @@
 
             drawLayer.addEventListener('mousemove', onMove);
             drawLayer.addEventListener('mouseup', onUp);
+            drawLayer.addEventListener('touchmove', onMove, { passive: false });
+            drawLayer.addEventListener('touchend', onUp);
         }
 
         function onMove(e) {
+            e.preventDefault();
             const b = drawLayer.getBoundingClientRect();
-            const cx = e.clientX - b.left;
-            const cy = e.clientY - b.top;
+            const { clientX, clientY } = eventCoords(e);
+            const cx = clientX - b.left;
+            const cy = clientY - b.top;
             rect.style.left   = Math.min(cx, startX) + 'px';
             rect.style.top    = Math.min(cy, startY) + 'px';
             rect.style.width  = Math.abs(cx - startX) + 'px';
@@ -200,10 +212,13 @@
         async function onUp(e) {
             drawLayer.removeEventListener('mousemove', onMove);
             drawLayer.removeEventListener('mouseup', onUp);
+            drawLayer.removeEventListener('touchmove', onMove);
+            drawLayer.removeEventListener('touchend', onUp);
 
             const b  = drawLayer.getBoundingClientRect();
-            const cx = e.clientX - b.left;
-            const cy = e.clientY - b.top;
+            const { clientX, clientY } = eventCoords(e);
+            const cx = clientX - b.left;
+            const cy = clientY - b.top;
             const rx = Math.min(startX, cx) / img.offsetWidth;
             const ry = Math.min(startY, cy) / img.offsetHeight;
             const rw = Math.abs(cx - startX) / img.offsetWidth;
@@ -211,7 +226,7 @@
 
             if (rect) { rect.remove(); rect = null; }
 
-            // Ignore tiny accidental clicks.
+            // Ignore tiny accidental taps.
             if (rw < 0.02 || rh < 0.02) return;
 
             const person = await showPersonSearch();
@@ -225,6 +240,7 @@
         }
 
         drawLayer.addEventListener('mousedown', onDown);
+        drawLayer.addEventListener('touchstart', onDown, { passive: false });
 
         function cancel() {
             drawLayer.remove();
